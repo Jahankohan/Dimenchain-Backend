@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api_gateway:
+    build: ./api_gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth_service
+    networks:
+      - app-network
+
+  auth_service:
+    build: ./auth_service
+    env_file:
+      - ./auth_service/.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+  
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: yourusername
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: yourdatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
