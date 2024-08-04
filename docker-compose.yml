@@ -9,6 +9,8 @@ services:
       - auth_service
     networks:
       - app-network
+    environment:
+      - AUTH_SERVICE_URL=http://auth_service:8001
 
   auth_service:
     build: ./auth_service
