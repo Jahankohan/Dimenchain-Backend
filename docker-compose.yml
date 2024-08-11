@@ -3,6 +3,8 @@ version: '3.8'
 services:
   api_gateway:
     build: ./api_gateway
+    env_file:
+      - ./api_gateway/.env
     ports:
       - "8000:8000"
     depends_on:
@@ -11,6 +13,9 @@ services:
       - app-network
     environment:
       - AUTH_SERVICE_URL=http://auth_service:8001
+      - USER_MANAGEMENT_SERVICE_URL=http://user_management_service:8002
+    volumes:
+      - ./shared:/shared
 
   auth_service:
     build: ./auth_service
@@ -33,6 +38,19 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-network
+
+  user_management_service:
+    build: ./user_management_service
+    env_file:
+      - ./user_management_service/.env
+    depends_on:
+      - postgres
+    ports:
+      - "8002:8002"
+    networks:
+      - app-network
+    volumes:
+      - ./shared:/shared
 
 networks:
   app-network:
