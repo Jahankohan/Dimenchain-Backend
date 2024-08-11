@@ -18,8 +18,7 @@ COPY ./app /app
 ENV PYTHONPATH="/:/app"
 
 WORKDIR /app
-# Expose the port that the app runs on
-EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8002
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
