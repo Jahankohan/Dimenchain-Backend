@@ -28,8 +28,8 @@ def login_user(form_data: auth_schema.UserLogin, db: Session = Depends(get_db)):
     user = AuthService.authenticate_user(db, identifier=form_data.identifier, password=form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email/username or password")
-    access_token, expires_in = AuthService.create_access_token(data={"sub": user.username, "email": user.email})
-    refresh_token = AuthService.create_refresh_token(data={"sub": user.username, "email": user.email})
+    access_token, expires_in = AuthService.create_access_token(data={"sub": user.username, "email": user.email, "user_id": user.id})
+    refresh_token = AuthService.create_refresh_token(data={"sub": user.username, "email": user.email, "user_id": user.id})
     return {
         "access_token": access_token,
         "token_type": "bearer",
@@ -40,8 +40,8 @@ def login_user(form_data: auth_schema.UserLogin, db: Session = Depends(get_db)):
 @router.post("/refresh/", response_model=auth_schema.Token)
 def refresh_token(refresh_token: auth_schema.RefreshTokenRequest):
     payload = AuthService.verify_refresh_token(refresh_token.refresh_token)
-    access_token, expires_in = AuthService.create_access_token(data={"sub": payload.username, "email": payload.email})
-    new_refresh_token = AuthService.create_refresh_token(data={"sub": payload.username, "email": payload.email})
+    access_token, expires_in = AuthService.create_access_token(data={"sub": payload.username, "email": payload.email, "user_id": payload.user_id})
+    new_refresh_token = AuthService.create_refresh_token(data={"sub": payload.username, "email": payload.email, "user_id": payload.user_id})
     return {
         "access_token": access_token,
         "token_type": "bearer",
