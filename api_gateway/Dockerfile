@@ -1,18 +1,23 @@
-# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Set the working directory in the container
-WORKDIR /app
+# List directory contents before copying
+# RUN echo "Current directory:" && pwd
+# RUN echo "Contents of current directory:" && ls -la /
+# RUN echo "Contents of parent directory:" && ls -la /..
 
-# Copy the requirements file into the container
+# Copy shared library
+COPY ../shared /shared
+
 COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
+# Install the specified packages
 RUN pip install -r requirements.txt
 
-# Copy the rest of the application code into the container
-COPY ./app ./app
+COPY ./app /app
 
+ENV PYTHONPATH="/:/app"
+
+WORKDIR /app
 # Expose the port that the app runs on
 EXPOSE 8000
 
